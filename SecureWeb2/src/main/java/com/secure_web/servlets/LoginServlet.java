@@ -1,12 +1,15 @@
 package com.secure_web.servlets;
+
 import io.github.cdimascio.dotenv.Dotenv;  // Import dotenv
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import javax.servlet.*;
 import javax.servlet.http.*;
 import java.io.*;
 import java.sql.*;
-import java.util.logging.Logger;
 
 public class LoginServlet extends HttpServlet {
+    private static final Logger logger = LogManager.getLogger(LoginServlet.class);
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String username = request.getParameter("username");
@@ -68,10 +71,12 @@ public class LoginServlet extends HttpServlet {
                 session.setAttribute("username", username);
                 session.setAttribute("role", role);
                 session.setMaxInactiveInterval(5 * 60); // Set session timeout to 5 minutes (300 seconds)
+                logger.info("User {} logged in successfully", username);
 
                 // Redirect the user to the welcome page
                 response.sendRedirect("welcome");
             } else {
+                logger.warn("Failed login attempt for username: {}", username);
                 response.getWriter().println("Invalid credentials.");
             }
 
